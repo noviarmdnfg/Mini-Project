@@ -1,0 +1,143 @@
+import matplotlib.pyplot as plt
+import pandas as pd
+import numpy as np
+from tkinter import *
+from tkinter import messagebox
+
+class Koleksi(Frame):
+    def __init__(self, master):
+        self.master = master
+        
+        Frame.__init__(self,master)
+        self.pack()
+        
+        master.geometry('500x100')
+        master.title("Grafik data koleksi yang sudah dikonservasi di DKI Jakarta")
+
+        '''membuat widget pada GUI'''
+        self.label1 = Label(self, text = "Masukkan tahun data koleksi:",
+                            font = "Courier 10 bold" )
+        self.label1.grid(row =0, column = 0, columnspan = 4)
+
+        self.data = StringVar()
+        self.entry1 = Entry(self, textvariable = self.data)
+        self.entry1.grid(row = 1, column = 0, columnspan = 4)
+
+        self.line_chart = Button(self, text = 'Line Chart', command = self.line)
+        self.line_chart.grid(row = 2, column = 0)
+
+        self.lolipop_chart = Button(self, text = 'Lolipop Chart', command = self.lolipop)
+        self.lolipop_chart.grid(row = 2, column = 1)
+
+        self.pie_chart = Button(self, text = 'Pie Chart', command = self.pie)
+        self.pie_chart.grid(row = 2, column = 2)
+
+        self.bar_chart = Button(self, text = 'Bar Chart', command = self.bar)
+        self.bar_chart.grid(row = 2, column = 3)
+
+        self.label2 = Label(self, text = 'Tahun yang termasuk :\n 2012, 2013, 2014, 2015, 2016, 2017',
+                            font = "Courier 10 bold" )
+        self.label2.grid(row =3, column = 0, columnspan = 4)
+
+        self.tahun = ['2012','2013','2014','2015','2016','2017']
+
+        self.colours = ['#034694','#001C58','#5CBFEB','#D00027',
+              '#EF0107','#DA020E','#274488','#ED1A3B',
+               '#000000','#091453','#60223B','#0053A0',
+               '#E03A3E']
+                               
+    def year(self):
+        '''Fungsi untuk mengambil File berdasarkan tahun yang dimasukkan oleh user'''
+        if self.data.get() == '2012':
+            self.table = pd.read_csv("Data-Koleksi-yang-sudah-di-konservasi-Tahun-2012.csv")
+        elif self.data.get() == '2013':
+            self.table = pd.read_csv("Data-Koleksi-yang-sudah-di-konservasi-Tahun-2013.csv")
+        elif self.data.get() == '2014':
+            self.table = pd.read_csv("Data-Koleksi-yang-sudah-di-konservasi-Tahun-2014.csv")
+        elif self.data.get() == '2015':
+            self.table = pd.read_csv("Data-Koleksi-yang-sudah-di-konservasi-Tahun-2015.csv")
+        elif self.data.get() == '2016':
+            self.table = pd.read_csv("Data-Koleksi-yang-sudah-di-konservasi-Tahun-2016.csv")
+        elif self.data.get() == '2017':
+            self.table = pd.read_csv("Data-Koleksi-yang-sudah-di-konservasi-Tahun-2017.csv")
+        else:
+            return False
+
+    def bar(self):
+        '''Fungsi untuk membentuk Bar Chart'''
+        plt.gcf().clear()
+        if self.year() == False:
+            messagebox.showerror("Warning!","Mohon masukkan kembali tahun data.")
+            return
+        
+        plt.bar(x=np.arange(1,14),height=self.table['jumlah'], color = self.colours)
+
+        plt.title("Data Koleksi yang sudah di konservasi pada tahun {}".format(self.data.get()))
+
+        plt.xticks(np.arange(1,14), self.table['konservasi koleksi museum '], rotation=90)
+
+        plt.xlabel("Koleksi")
+        plt.ylabel("Jumlah")
+
+        plt.show()
+
+    def line(self): 
+        '''Fungsi untuk membentuk Line Chart'''
+        plt.gcf().clear()
+        if self.year() == False:
+            messagebox.showerror("Warning!","Mohon masukkan kembali tahun data.")
+            return
+    
+        plt.title("Data Koleksi yang sudah di konservasi pada tahun {}".format(self.data.get()))
+
+        plt.plot(self.table['konservasi koleksi museum '],self.table['jumlah'], color = "red")
+
+        plt.xticks(self.table['konservasi koleksi museum '], rotation=90)
+
+        plt.xlabel("Koleksi")
+        plt.ylabel("Jumlah")
+
+        plt.show()
+
+    def pie(self):
+        '''Fungsi untuk membentuk Pie Chart'''
+        plt.gcf().clear()
+        if self.year() == False:
+            messagebox.showerror("Warning!","Mohon masukkan kembali tahun data.")
+            return
+        
+        plt.title("Data Koleksi yang sudah di konservasi pada tahun {}".format(self.data.get()))
+
+        plt.pie(self.table['jumlah'], labels = self.table['konservasi koleksi museum '], colors = self.colours, startangle = 90)
+
+        plt.show()
+        
+    def lolipop(self):
+        '''Fungsi untuk membentuk Lolipop Chart'''
+        plt.gcf().clear()
+        if self.year() == False:
+            messagebox.showerror("Warning!","Mohon masukkan kembali tahun data.")
+            return
+        
+        plt.title("Data Koleksi yang sudah di konservasi pada tahun {}".format(self.data.get()))
+
+        plt.hlines(y=np.arange(1,14),xmin=0,xmax=self.table['jumlah'],color= self.colours)
+
+        plt.plot(self.table['jumlah'], np.arange(1,14), "o")
+        plt.yticks(np.arange(1,14), self.table['konservasi koleksi museum '])
+
+        plt.ylabel("Koleksi")
+        plt.xlabel("Jumlah")
+        
+        plt.show()
+        
+def main():
+    '''fungsi utama'''
+    root = Tk()
+    gui1 = Koleksi(root)
+    root.mainloop()
+    
+'''memanggil fungsi utama'''
+if __name__ == '__main__':
+    main()            
+
